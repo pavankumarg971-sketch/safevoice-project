@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-import { MapPin, RefreshCw, Loader2, MapPinOff } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { getCurrentCoords, type Coords } from '@/lib/geolocation';
+import { useEffect, useState } from "react";
+import { MapPin, RefreshCw, Loader2, MapPinOff } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { getCurrentCoords, type Coords } from "@/lib/geolocation";
 
 export function LocationStatusCard() {
   const [coords, setCoords] = useState<Coords | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>('');
+  const [lastUpdated, setLastUpdated] = useState<string>("");
 
   const fetchLocation = async () => {
     setLoading(true);
@@ -18,7 +18,7 @@ export function LocationStatusCard() {
       setCoords(c);
       setLastUpdated(new Date().toLocaleTimeString());
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to get location');
+      setError(err instanceof Error ? err.message : "Failed to get location");
     } finally {
       setLoading(false);
     }
@@ -81,7 +81,7 @@ export function LocationStatusCard() {
                 className="absolute inset-0 opacity-10"
                 style={{
                   backgroundImage: `radial-gradient(circle at 50% 50%, rgba(59,130,246,0.5) 1px, transparent 1px)`,
-                  backgroundSize: '20px 20px',
+                  backgroundSize: "20px 20px",
                 }}
               />
               <div className="relative text-center">

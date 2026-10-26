@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from "react";
 import {
   Users,
   Plus,
@@ -11,14 +11,14 @@ import {
   AlertCircle,
   Loader2,
   ShieldCheck,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
-import { toast } from 'sonner';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 export type Contact = {
   id: string;
@@ -30,9 +30,13 @@ export type Contact = {
 };
 
 // Helper to validate phone with country code (E.164 standard)
-export function validatePhoneNumber(raw: string): { valid: boolean; formatted: string; error?: string } {
-  const cleaned = raw.trim().replace(/[\s\-()]/g, '');
-  if (!cleaned.startsWith('+')) {
+export function validatePhoneNumber(raw: string): {
+  valid: boolean;
+  formatted: string;
+  error?: string;
+} {
+  const cleaned = raw.trim().replace(/[\s\-()]/g, "");
+  if (!cleaned.startsWith("+")) {
     return {
       valid: false,
       formatted: cleaned,
@@ -59,21 +63,21 @@ export function EmergencyContactManager() {
   // Form states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [relationship, setRelationship] = useState('Parent');
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [relationship, setRelationship] = useState("Parent");
   const [isPrimary, setIsPrimary] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // Load contacts
-  const loadContacts = async () => {
+  const loadContacts = useCallback(async () => {
     setLoading(true);
 
     if (!user) {
       // Load from localStorage if present
-      if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('safevoice_emergency_contacts');
+      if (typeof window !== "undefined") {
+        const stored = localStorage.getItem("safevoice_emergency_contacts");
         if (stored) {
           try {
             const parsed = JSON.parse(stored);
@@ -94,10 +98,10 @@ export function EmergencyContactManager() {
 
     try {
       const { data, error } = await supabase
-        .from('emergency_contacts')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('is_primary', { ascending: false });
+        .from("emergency_contacts")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("is_primary", { ascending: false });
 
       if (error) throw error;
       setContacts(data ? (data as Contact[]) : []);
@@ -106,19 +110,19 @@ export function EmergencyContactManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
-    loadContacts();
-  }, [user]);
+    void loadContacts();
+  }, [loadContacts]);
 
   // Open Add modal
   const openAddModal = () => {
     setEditingId(null);
-    setName('');
-    setPhone('+91 ');
-    setEmail('');
-    setRelationship('Parent');
+    setName("");
+    setPhone("+91 ");
+    setEmail("");
+    setRelationship("Parent");
     setIsPrimary(contacts.length === 0);
     setIsModalOpen(true);
   };
@@ -128,8 +132,8 @@ export function EmergencyContactManager() {
     setEditingId(c.id);
     setName(c.name);
     setPhone(c.phone);
-    setEmail(c.email || '');
-    setRelationship(c.relationship || 'Parent');
+    setEmail(c.email || "");
+    setRelationship(c.relationship || "Parent");
     setIsPrimary(c.is_primary);
     setIsModalOpen(true);
   };
@@ -138,7 +142,7 @@ export function EmergencyContactManager() {
   const handleSaveContact = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      toast.error('Please enter contact full name.');
+      toast.error("Please enter contact full name.");
       return;
     }
 
@@ -156,13 +160,20 @@ export function EmergencyContactManager() {
         if (editingId) {
           updated = contacts.map((c) =>
             c.id === editingId
-              ? { ...c, name: name.trim(), phone: phoneValidation.formatted, email: email.trim(), relationship, is_primary: isPrimary }
+              ? {
+                  ...c,
+                  name: name.trim(),
+                  phone: phoneValidation.formatted,
+                  email: email.trim(),
+                  relationship,
+                  is_primary: isPrimary,
+                }
               : c,
           );
           toast.success(`Contact ${name} updated.`);
         } else {
           const newC: Contact = {
-            id: 'demo-' + Date.now(),
+            id: "demo-" + Date.now(),
             name: name.trim(),
             phone: phoneValidation.formatted,
             email: email.trim(),
@@ -174,9 +185,9 @@ export function EmergencyContactManager() {
         }
 
         setContacts(updated);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('safevoice_emergency_contacts', JSON.stringify(updated));
-          window.dispatchEvent(new Event('safevoice_contacts_updated'));
+        if (typeof window !== "undefined") {
+          localStorage.setItem("safevoice_emergency_contacts", JSON.stringify(updated));
+          window.dispatchEvent(new Event("safevoice_contacts_updated"));
         }
         setIsModalOpen(false);
         setSubmitting(false);
@@ -186,7 +197,7 @@ export function EmergencyContactManager() {
       // Logged in user: persist in Supabase
       if (editingId) {
         const { error } = await supabase
-          .from('emergency_contacts')
+          .from("emergency_contacts")
           .update({
             name: name.trim(),
             phone: phoneValidation.formatted,
@@ -194,13 +205,13 @@ export function EmergencyContactManager() {
             relationship,
             is_primary: isPrimary,
           })
-          .eq('id', editingId)
-          .eq('user_id', user.id);
+          .eq("id", editingId)
+          .eq("user_id", user.id);
 
         if (error) throw error;
         toast.success(`Contact ${name} updated successfully!`);
       } else {
-        const { error } = await supabase.from('emergency_contacts').insert({
+        const { error } = await supabase.from("emergency_contacts").insert({
           user_id: user.id,
           name: name.trim(),
           phone: phoneValidation.formatted,
@@ -215,11 +226,11 @@ export function EmergencyContactManager() {
 
       setIsModalOpen(false);
       await loadContacts();
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('safevoice_contacts_updated'));
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("safevoice_contacts_updated"));
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to save contact.';
+      const msg = err instanceof Error ? err.message : "Failed to save contact.";
       toast.error(msg);
     } finally {
       setSubmitting(false);
@@ -233,25 +244,25 @@ export function EmergencyContactManager() {
     }
 
     try {
-      if (user && !id.startsWith('demo-')) {
+      if (user && !id.startsWith("demo-")) {
         const { error } = await supabase
-          .from('emergency_contacts')
+          .from("emergency_contacts")
           .delete()
-          .eq('id', id)
-          .eq('user_id', user.id);
+          .eq("id", id)
+          .eq("user_id", user.id);
 
         if (error) throw error;
       }
 
       const updated = contacts.filter((c) => c.id !== id);
       setContacts(updated);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('safevoice_emergency_contacts', JSON.stringify(updated));
-        window.dispatchEvent(new Event('safevoice_contacts_updated'));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("safevoice_emergency_contacts", JSON.stringify(updated));
+        window.dispatchEvent(new Event("safevoice_contacts_updated"));
       }
       toast.success(`Removed ${contactName} from emergency contacts.`);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Failed to delete contact.';
+      const msg = err instanceof Error ? err.message : "Failed to delete contact.";
       toast.error(msg);
     }
   };
@@ -267,7 +278,8 @@ export function EmergencyContactManager() {
           <div>
             <h3 className="text-base font-bold text-white">Emergency Contacts Directory</h3>
             <p className="text-xs text-slate-400">
-              These contacts automatically receive SMS alerts, live tracking links, and voice calls during an SOS.
+              These contacts automatically receive SMS alerts, live tracking links, and voice calls
+              during an SOS.
             </p>
           </div>
         </div>
@@ -292,7 +304,8 @@ export function EmergencyContactManager() {
           <AlertCircle className="size-8 text-amber-400 mx-auto" />
           <p className="text-sm font-semibold text-white">No emergency contacts saved yet</p>
           <p className="text-xs text-slate-400 max-w-sm mx-auto">
-            Add at least one family member or guardian so they can receive automated SMS alerts and phone calls.
+            Add at least one family member or guardian so they can receive automated SMS alerts and
+            phone calls.
           </p>
           <Button onClick={openAddModal} size="sm" className="bg-purple-600 text-white mt-2">
             Add First Contact
@@ -310,9 +323,9 @@ export function EmergencyContactManager() {
                 <Avatar className="size-11 border border-white/10">
                   <AvatarFallback className="bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold text-sm">
                     {c.name
-                      .split(' ')
+                      .split(" ")
                       .map((n) => n[0])
-                      .join('')
+                      .join("")
                       .slice(0, 2)
                       .toUpperCase()}
                   </AvatarFallback>
@@ -372,7 +385,7 @@ export function EmergencyContactManager() {
             <div className="flex items-center justify-between">
               <h4 className="text-base font-bold text-white flex items-center gap-2">
                 <ShieldCheck className="size-5 text-purple-400" />
-                {editingId ? 'Edit Emergency Contact' : 'Add Emergency Contact'}
+                {editingId ? "Edit Emergency Contact" : "Add Emergency Contact"}
               </h4>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -443,7 +456,9 @@ export function EmergencyContactManager() {
               <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/40 border border-white/5">
                 <div>
                   <p className="text-xs font-semibold text-white">Set as Primary Contact</p>
-                  <p className="text-[10px] text-slate-400">Notified first during emergency dispatch</p>
+                  <p className="text-[10px] text-slate-400">
+                    Notified first during emergency dispatch
+                  </p>
                 </div>
                 <input
                   type="checkbox"
@@ -467,7 +482,7 @@ export function EmergencyContactManager() {
                   disabled={submitting}
                   className="bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-4 rounded-xl cursor-pointer"
                 >
-                  {submitting ? 'Saving...' : editingId ? 'Update Contact' : 'Save Contact'}
+                  {submitting ? "Saving..." : editingId ? "Update Contact" : "Save Contact"}
                 </Button>
               </div>
             </form>

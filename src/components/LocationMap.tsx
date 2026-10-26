@@ -25,7 +25,10 @@ export default function LocationMap({
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
-    const map = L.map(containerRef.current, { scrollWheelZoom: false }).setView([20.5937, 78.9629], 4);
+    const map = L.map(containerRef.current, { scrollWheelZoom: false }).setView(
+      [20.5937, 78.9629],
+      4,
+    );
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; OpenStreetMap contributors",
       maxZoom: 19,
@@ -65,11 +68,16 @@ export default function LocationMap({
     if (points.length === 1) {
       map.setView([points[0]!.latitude, points[0]!.longitude], zoom);
     } else {
-      map.fitBounds(L.latLngBounds(points.map((p) => [p.latitude, p.longitude] as [number, number])), {
-        padding: [40, 40],
-      });
+      map.fitBounds(
+        L.latLngBounds(points.map((p) => [p.latitude, p.longitude] as [number, number])),
+        {
+          padding: [40, 40],
+        },
+      );
     }
   }, [points, zoom]);
 
-  return <div ref={containerRef} style={{ height }} className="w-full rounded-xl border border-border" />;
+  return (
+    <div ref={containerRef} style={{ height }} className="w-full rounded-xl border border-border" />
+  );
 }

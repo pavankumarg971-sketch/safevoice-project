@@ -34,7 +34,10 @@ serve(async (req: Request) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(token);
     if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
@@ -67,7 +70,9 @@ serve(async (req: Request) => {
 
     const isDemo = Boolean(demo || alert?.demo);
     const who = profile?.full_name || "Your trusted contact";
-    const mapUrl = loc ? `https://www.google.com/maps?q=${loc.latitude},${loc.longitude}` : "Location unavailable";
+    const mapUrl = loc
+      ? `https://www.google.com/maps?q=${loc.latitude},${loc.longitude}`
+      : "Location unavailable";
     const timeStr = new Date().toLocaleTimeString();
 
     const smsMessage =
@@ -117,8 +122,12 @@ serve(async (req: Request) => {
               Authorization: `Basic ${btoa(`${twilioSid}:${twilioToken}`)}`,
               "Content-Type": "application/x-www-form-urlencoded",
             },
-            body: new URLSearchParams({ To: c.phone, From: twilioFrom, Body: smsMessage }).toString(),
-          }
+            body: new URLSearchParams({
+              To: c.phone,
+              From: twilioFrom,
+              Body: smsMessage,
+            }).toString(),
+          },
         );
         const smsData = await smsRes.json();
         logs.push({
@@ -153,8 +162,12 @@ serve(async (req: Request) => {
               Authorization: `Basic ${btoa(`${twilioSid}:${twilioToken}`)}`,
               "Content-Type": "application/x-www-form-urlencoded",
             },
-            body: new URLSearchParams({ To: c.phone, From: twilioFrom, Twiml: twimlVoice }).toString(),
-          }
+            body: new URLSearchParams({
+              To: c.phone,
+              From: twilioFrom,
+              Twiml: twimlVoice,
+            }).toString(),
+          },
         );
         const voiceData = await voiceRes.json();
         logs.push({

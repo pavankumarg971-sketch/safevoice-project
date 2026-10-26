@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { Phone, UserPlus, Star } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useState } from "react";
+import { Phone, UserPlus, Star } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 type Contact = {
   id: string;
@@ -16,9 +16,15 @@ type Contact = {
 
 // Demo contacts shown when user is not logged in
 const DEMO_CONTACTS: Contact[] = [
-  { id: '1', name: 'Mom', phone: '+91 98765 43210', relationship: 'Parent', is_primary: true },
-  { id: '2', name: 'Dad', phone: '+91 98765 43211', relationship: 'Parent', is_primary: false },
-  { id: '3', name: 'Best Friend', phone: '+91 91234 56789', relationship: 'Friend', is_primary: false },
+  { id: "1", name: "Mom", phone: "+91 98765 43210", relationship: "Parent", is_primary: true },
+  { id: "2", name: "Dad", phone: "+91 98765 43211", relationship: "Parent", is_primary: false },
+  {
+    id: "3",
+    name: "Best Friend",
+    phone: "+91 91234 56789",
+    relationship: "Friend",
+    is_primary: false,
+  },
 ];
 
 export function EmergencyContactsCard() {
@@ -35,10 +41,10 @@ export function EmergencyContactsCard() {
 
     // Fetch real contacts from Supabase
     supabase
-      .from('emergency_contacts')
-      .select('id, name, phone, relationship, is_primary')
-      .eq('user_id', user.id)
-      .order('is_primary', { ascending: false })
+      .from("emergency_contacts")
+      .select("id, name, phone, relationship, is_primary")
+      .eq("user_id", user.id)
+      .order("is_primary", { ascending: false })
       .then(({ data }) => {
         if (data && data.length > 0) {
           setContacts(data);

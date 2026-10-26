@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Phone, MessageSquare, Plus, Star, Users, UserPlus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
-import { toast } from 'sonner';
+import { useState, useEffect, useCallback } from "react";
+import { Phone, MessageSquare, Plus, Star, Users, UserPlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 interface Contact {
   id: string;
@@ -28,10 +28,10 @@ export function QuickEmergencyContactsCard({ onManageClick }: Props) {
     if (user) {
       try {
         const { data, error } = await supabase
-          .from('emergency_contacts')
-          .select('id, name, relationship, phone, is_primary')
-          .eq('user_id', user.id)
-          .order('is_primary', { ascending: false })
+          .from("emergency_contacts")
+          .select("id, name, relationship, phone, is_primary")
+          .eq("user_id", user.id)
+          .order("is_primary", { ascending: false })
           .limit(3);
 
         if (!error && data && data.length > 0) {
@@ -40,13 +40,13 @@ export function QuickEmergencyContactsCard({ onManageClick }: Props) {
           return;
         }
       } catch (err) {
-        console.warn('Error loading contacts from Supabase:', err);
+        console.warn("Error loading contacts from Supabase:", err);
       }
     }
 
     // 2. Check localStorage (for guest mode or local fallback)
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('safevoice_emergency_contacts');
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("safevoice_emergency_contacts");
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
@@ -56,7 +56,7 @@ export function QuickEmergencyContactsCard({ onManageClick }: Props) {
             return;
           }
         } catch (e) {
-          console.warn('Error reading stored contacts', e);
+          console.warn("Error reading stored contacts", e);
         }
       }
     }
@@ -74,12 +74,12 @@ export function QuickEmergencyContactsCard({ onManageClick }: Props) {
       fetchContacts();
     };
 
-    window.addEventListener('safevoice_contacts_updated', handleSync);
-    window.addEventListener('storage', handleSync);
+    window.addEventListener("safevoice_contacts_updated", handleSync);
+    window.addEventListener("storage", handleSync);
 
     return () => {
-      window.removeEventListener('safevoice_contacts_updated', handleSync);
-      window.removeEventListener('storage', handleSync);
+      window.removeEventListener("safevoice_contacts_updated", handleSync);
+      window.removeEventListener("storage", handleSync);
     };
   }, [fetchContacts]);
 
@@ -105,8 +105,8 @@ export function QuickEmergencyContactsCard({ onManageClick }: Props) {
             <h3 className="text-sm font-semibold text-white">Emergency Contacts</h3>
             <p className="text-xs text-slate-400">
               {contacts.length > 0
-                ? `${contacts.length} trusted contact${contacts.length > 1 ? 's' : ''} configured`
-                : 'Notified via SMS & Voice call on SOS'}
+                ? `${contacts.length} trusted contact${contacts.length > 1 ? "s" : ""} configured`
+                : "Notified via SMS & Voice call on SOS"}
             </p>
           </div>
         </div>
@@ -133,7 +133,8 @@ export function QuickEmergencyContactsCard({ onManageClick }: Props) {
           <div>
             <p className="text-xs font-semibold text-white">No emergency contacts added yet</p>
             <p className="text-[11px] text-slate-400 mt-0.5 max-w-xs">
-              Add your mobile number or trusted family members so they receive your SOS location alert.
+              Add your mobile number or trusted family members so they receive your SOS location
+              alert.
             </p>
           </div>
           <Button
@@ -157,12 +158,12 @@ export function QuickEmergencyContactsCard({ onManageClick }: Props) {
                 <Avatar className="size-9 border border-white/10">
                   <AvatarFallback className="bg-gradient-to-tr from-indigo-600 to-purple-600 text-white text-xs font-bold">
                     {c.name
-                      .split(' ')
+                      .split(" ")
                       .filter(Boolean)
                       .map((n) => n[0])
-                      .join('')
+                      .join("")
                       .slice(0, 2)
-                      .toUpperCase() || 'C'}
+                      .toUpperCase() || "C"}
                   </AvatarFallback>
                 </Avatar>
                 <div>
@@ -208,7 +209,9 @@ export function QuickEmergencyContactsCard({ onManageClick }: Props) {
           onClick={onManageClick}
           className="text-xs text-purple-400 hover:text-purple-300 transition-colors cursor-pointer font-medium"
         >
-          {contacts.length > 0 ? `Manage All Contacts (${contacts.length}) →` : '+ Open Contact Manager →'}
+          {contacts.length > 0
+            ? `Manage All Contacts (${contacts.length}) →`
+            : "+ Open Contact Manager →"}
         </button>
       </div>
     </div>

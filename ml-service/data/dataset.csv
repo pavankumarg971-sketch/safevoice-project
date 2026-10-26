@@ -1,0 +1,66 @@
+text,label
+"I need help someone is hurting me",EMERGENCY
+"Emergency please call nine one one right now",EMERGENCY
+"Someone help me please I am in danger",EMERGENCY
+"Save me police save me please",EMERGENCY
+"There is a robber with a gun in my house help",EMERGENCY
+"Emergency ambulance required immediately",EMERGENCY
+"Help me someone is trying to kidnap me",EMERGENCY
+"Please send police to my location emergency",EMERGENCY
+"I am being attacked someone call the cops",EMERGENCY
+"Save my life someone is choking me help",EMERGENCY
+"Emergency distress signal help needed",EMERGENCY
+"Stop do not come near me or I will call police",THREAT
+"He said he is going to kill me",THREAT
+"Leave me alone get away from me right now",THREAT
+"You are threatening me step back",THREAT
+"Stop following me or I will scream",THREAT
+"He threatened to beat me up",THREAT
+"Do not touch me get your hands off me",THREAT
+"He has a knife and is threatening everyone",THREAT
+"Stay away from me you creep",THREAT
+"I will report you to the police leave me alone",THREAT
+"This person is stalking me everywhere I go",HARASSMENT
+"He keeps following me and asking inappropriate things",HARASSMENT
+"I feel unsafe after that creepy conversation",HARASSMENT
+"Stop harassing me I told you no multiple times",HARASSMENT
+"He has been watching my apartment for three days",HARASSMENT
+"Verbal abuse and continuous harassment",HARASSMENT
+"Unwanted physical contact and stalking on the bus",HARASSMENT
+"A strange man is following me down the street",HARASSMENT
+"He won't stop texting and calling threats",HARASSMENT
+"Someone is trying to break into my house",ASSAULT
+"He grabbed my arm violently and hit me",ASSAULT
+"I was assaulted on the street corner",ASSAULT
+"A man physically attacked me and stole my bag",ASSAULT
+"He forced his way into my car and assaulted me",ASSAULT
+"Violent physical attack please send help",ASSAULT
+"He punched me and threw me to the ground",ASSAULT
+"I have been battered and assaulted",ASSAULT
+"I am lost in the dark and feel terrified",DISTRESS
+"My child is crying and we might be in danger",DISTRESS
+"I feel very unsafe walking here alone",DISTRESS
+"My car broke down in the middle of nowhere and someone is watching",DISTRESS
+"My heart is racing I think someone is behind me",DISTRESS
+"Can someone please stay on the phone with me I am scared",DISTRESS
+"Suspicious person hiding near my car terrified",DISTRESS
+"I feel so afraid right now please come quick",DISTRESS
+"I am stranded alone at night feeling very unsafe",DISTRESS
+"Hello how are you doing today",NORMAL
+"Can you hear the music playing",NORMAL
+"What is the weather forecast for tomorrow",NORMAL
+"I will see you at the office on Monday morning",NORMAL
+"Can you pick up groceries like milk and bread on your way home",NORMAL
+"Having coffee and lunch with friends at the cafe",NORMAL
+"Good morning hope you have a wonderful day",NORMAL
+"Listening to my favorite music playlist",NORMAL
+"I just arrived safely at the train station",NORMAL
+"Working on my college final year engineering project",NORMAL
+"The team meeting has been rescheduled to five pm",NORMAL
+"I am going to cook dinner tonight for the family",NORMAL
+"Thanks for calling me back talk to you soon",NORMAL
+"Just checking in to say hi everything is fine",NORMAL
+"Taking a peaceful walk in the garden today",NORMAL
+"Watching a nice movie at home relaxing",NORMAL
+"Let us schedule our study session for tomorrow",NORMAL
+"Everything is peaceful and completely safe here",NORMAL

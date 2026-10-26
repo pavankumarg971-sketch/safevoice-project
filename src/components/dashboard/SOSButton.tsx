@@ -1,9 +1,10 @@
-import { useState, useRef } from 'react';
-import { Loader2, Radio, ShieldAlert, CheckCircle2, AlertTriangle, Sparkles } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import { triggerEmergency, type EmergencyResult } from '@/lib/emergency';
+import { useState, useRef } from "react";
+import { Loader2, Radio, ShieldAlert, CheckCircle2, AlertTriangle, Sparkles } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { triggerEmergency, type EmergencyResult } from "@/lib/emergency";
+import { startSosVoiceAssistance } from "@/lib/voiceStreaming";
 
 interface SOSButtonProps {
   onSosActivated?: (result: EmergencyResult) => void;
@@ -29,26 +30,39 @@ export function SOSButton({ onSosActivated, isStreaming, onEndSos }: SOSButtonPr
     setIsTriggering(true);
     try {
       const demo = testMode || (profile?.demo_mode ?? false);
-      const result = await triggerEmergency({ trigger: 'BUTTON', demo });
+      const result = await triggerEmergency({ trigger: "BUTTON", demo });
 
       setLastResult(result);
+
+      // Auto-start emergency voice recording, transcription & situation prediction
+      try {
+        void startSosVoiceAssistance(result.alertId);
+        window.dispatchEvent(
+          new CustomEvent("safevoice_sos_activated", {
+            detail: { alertId: result.alertId, coords: result.coords },
+          }),
+        );
+      } catch (voiceErr) {
+        console.warn("Could not auto-start voice assistant:", voiceErr);
+      }
+
       if (onSosActivated) {
         onSosActivated(result);
       }
 
       if (demo) {
-        toast.info('🚨 [TEST MODE] SOS Alert Activated!', {
-          description: `Simulated alert for: ${result.recipientsSummary}. (Test Mode is ON — no real SMS sent).`,
+        toast.info("🚨 [TEST MODE] SOS Alert Activated & Voice Streaming!", {
+          description: `Voice assistant started automatically. Audio & AI situation analysis streaming for: ${result.recipientsSummary}.`,
           duration: 9000,
         });
-      } else if (result.notification?.overall === 'NOT_CONFIGURED') {
-        toast.warning('⚠️ Real SMS Gateway Not Configured', {
-          description: `Twilio keys are missing in your .env file. Use the 'Send SMS via Phone App' button or add Twilio credentials to send real cellular SMS.`,
+      } else if (result.notification?.overall === "NOT_CONFIGURED") {
+        toast.warning("⚠️ Real SMS Gateway Not Configured", {
+          description: `Voice assistant is actively streaming to contacts. Add Twilio credentials or use the WhatsApp/SMS share buttons to dispatch cellular SMS.`,
           duration: 12000,
         });
       } else {
-        toast.error('🚨 REAL EMERGENCY SOS ACTIVATED!', {
-          description: `Dispatched live SMS & Voice call to: ${result.recipientsSummary}. Live GPS tracking active.`,
+        toast.error("🚨 REAL EMERGENCY SOS & VOICE ASSISTANT ACTIVATED!", {
+          description: `Voice assistant listening & streaming live audio, AI situation prediction, and GPS to: ${result.recipientsSummary}.`,
           duration: 10000,
         });
       }
@@ -56,8 +70,8 @@ export function SOSButton({ onSosActivated, isStreaming, onEndSos }: SOSButtonPr
       setCooldown(true);
       setTimeout(() => setCooldown(false), 8000);
     } catch (err) {
-      toast.error('SOS Activation Failed', {
-        description: err instanceof Error ? err.message : 'Could not trigger emergency alert.',
+      toast.error("SOS Activation Failed", {
+        description: err instanceof Error ? err.message : "Could not trigger emergency alert.",
       });
     } finally {
       setIsTriggering(false);
@@ -115,15 +129,19 @@ export function SOSButton({ onSosActivated, isStreaming, onEndSos }: SOSButtonPr
           onClick={() => {
             const next = !testMode;
             setTestMode(next);
-            toast.info(next ? 'Switched to Test / Simulation Mode.' : 'REAL EMERGENCY MODE: Real SMS & calls will be placed.');
+            toast.info(
+              next
+                ? "Switched to Test / Simulation Mode."
+                : "REAL EMERGENCY MODE: Real SMS & calls will be placed.",
+            );
           }}
           className={`px-2 py-0.5 rounded-md font-semibold text-[10px] uppercase transition-colors ${
             testMode
-              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-              : 'bg-rose-600 text-white shadow-sm'
+              ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+              : "bg-rose-600 text-white shadow-sm"
           }`}
         >
-          {testMode ? 'ON (Safe)' : 'OFF (Live)'}
+          {testMode ? "ON (Safe)" : "OFF (Live)"}
         </button>
       </div>
 
@@ -147,7 +165,7 @@ export function SOSButton({ onSosActivated, isStreaming, onEndSos }: SOSButtonPr
             text-white font-black shadow-[0_0_50px_rgba(244,63,94,0.45)]
             transition-all duration-300 hover:scale-105 active:scale-95
             focus:outline-none cursor-pointer border-4 border-rose-400/40 select-none
-            ${cooldown ? 'opacity-70 cursor-not-allowed' : ''}
+            ${cooldown ? "opacity-70 cursor-not-allowed" : ""}
           `}
         >
           {/* Progress Ring if holding */}
@@ -174,7 +192,9 @@ export function SOSButton({ onSosActivated, isStreaming, onEndSos }: SOSButtonPr
           ) : isStreaming ? (
             <div className="flex flex-col items-center gap-1">
               <Radio className="size-6 text-white/90 animate-pulse" />
-              <span className="text-xs font-bold uppercase tracking-widest text-emerald-300">STREAMING</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-emerald-300">
+                STREAMING
+              </span>
             </div>
           ) : cooldown ? (
             <div className="flex flex-col items-center gap-1">
@@ -193,10 +213,10 @@ export function SOSButton({ onSosActivated, isStreaming, onEndSos }: SOSButtonPr
 
       <p className="mt-3 text-[11px] font-medium text-slate-400 text-center tracking-wide">
         {isStreaming
-          ? 'Live GPS location broadcasting is active'
+          ? "Live GPS location broadcasting is active"
           : cooldown
-            ? 'Broadcast active · 8s cooldown'
-            : 'Hold for 1.5s or click to trigger'}
+            ? "Broadcast active · 8s cooldown"
+            : "Hold for 1.5s or click to trigger"}
       </p>
 
       {/* End SOS Button if active */}
@@ -220,7 +240,8 @@ export function SOSButton({ onSosActivated, isStreaming, onEndSos }: SOSButtonPr
             <div>
               <h3 className="text-base font-bold text-white">Confirm Real SOS Activation</h3>
               <p className="text-xs text-slate-300 mt-1">
-                You are about to transmit a real emergency broadcast with your live GPS location, dispatching SMS alerts and automated voice calls to all trusted contacts.
+                You are about to transmit a real emergency broadcast with your live GPS location,
+                dispatching SMS alerts and automated voice calls to all trusted contacts.
               </p>
             </div>
             <div className="flex items-center gap-2 pt-2">

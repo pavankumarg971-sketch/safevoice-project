@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   ShieldAlert,
   Radio,
@@ -12,63 +12,63 @@ import {
   Building2,
   Cross,
   CheckCircle,
-} from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+} from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface AlertItem {
   id: string;
   title: string;
   time: string;
   units: string;
-  status: 'active' | 'en_route' | 'resolved';
+  status: "active" | "en_route" | "resolved";
   type: string;
   coords: { x: number; y: number };
 }
 
 const DISPATCH_ALERTS: AlertItem[] = [
   {
-    id: 'ALERT #1',
-    title: 'Lincoln Elementary School',
-    time: '14:23:07',
-    units: '2 units dispatched',
-    status: 'active',
-    type: 'School Zone',
+    id: "ALERT #1",
+    title: "Lincoln Elementary School",
+    time: "14:23:07",
+    units: "2 units dispatched",
+    status: "active",
+    type: "School Zone",
     coords: { x: 35, y: 30 },
   },
   {
-    id: 'ALERT #2',
-    title: 'Mercy General Hospital',
-    time: '14:21:40',
-    units: '1 unit on scene',
-    status: 'en_route',
-    type: 'Hospital',
+    id: "ALERT #2",
+    title: "Mercy General Hospital",
+    time: "14:21:40",
+    units: "1 unit on scene",
+    status: "en_route",
+    type: "Hospital",
     coords: { x: 65, y: 38 },
   },
   {
-    id: 'ALERT #3',
-    title: 'Downtown Financial Branch',
-    time: '14:18:12',
-    units: '2 units dispatched',
-    status: 'active',
-    type: 'Bank',
+    id: "ALERT #3",
+    title: "Downtown Financial Branch",
+    time: "14:18:12",
+    units: "2 units dispatched",
+    status: "active",
+    type: "Bank",
     coords: { x: 50, y: 55 },
   },
   {
-    id: 'ALERT #4',
-    title: 'City Hall Civic Center',
-    time: '14:15:05',
-    units: '3 units standing by',
-    status: 'active',
-    type: 'Government Building',
+    id: "ALERT #4",
+    title: "City Hall Civic Center",
+    time: "14:15:05",
+    units: "3 units standing by",
+    status: "active",
+    type: "Government Building",
     coords: { x: 62, y: 72 },
   },
 ];
 
 export function PublicSafetyDispatch() {
   const [selectedAlert, setSelectedAlert] = useState<AlertItem>(DISPATCH_ALERTS[0]);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'panic' | 'facilities'>('dashboard');
+  const [activeTab, setActiveTab] = useState<"dashboard" | "panic" | "facilities">("dashboard");
   const [cameraActive, setCameraActive] = useState(true);
 
   const handleDispatchUnit = () => {
@@ -92,31 +92,29 @@ export function PublicSafetyDispatch() {
         {/* Center Tabs */}
         <div className="hidden sm:flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-white/5">
           <button
-            onClick={() => setActiveTab('dashboard')}
+            onClick={() => setActiveTab("dashboard")}
             className={`px-3 py-1 text-xs font-semibold rounded-lg transition-colors ${
-              activeTab === 'dashboard'
-                ? 'bg-blue-600 text-white'
-                : 'text-slate-400 hover:text-white'
+              activeTab === "dashboard"
+                ? "bg-blue-600 text-white"
+                : "text-slate-400 hover:text-white"
             }`}
           >
             Dashboard
           </button>
           <button
-            onClick={() => setActiveTab('panic')}
+            onClick={() => setActiveTab("panic")}
             className={`px-3 py-1 text-xs font-semibold rounded-lg transition-colors ${
-              activeTab === 'panic'
-                ? 'bg-blue-600 text-white'
-                : 'text-slate-400 hover:text-white'
+              activeTab === "panic" ? "bg-blue-600 text-white" : "text-slate-400 hover:text-white"
             }`}
           >
             Panic Alerts
           </button>
           <button
-            onClick={() => setActiveTab('facilities')}
+            onClick={() => setActiveTab("facilities")}
             className={`px-3 py-1 text-xs font-semibold rounded-lg transition-colors ${
-              activeTab === 'facilities'
-                ? 'bg-blue-600 text-white'
-                : 'text-slate-400 hover:text-white'
+              activeTab === "facilities"
+                ? "bg-blue-600 text-white"
+                : "text-slate-400 hover:text-white"
             }`}
           >
             Facilities
@@ -153,8 +151,8 @@ export function PublicSafetyDispatch() {
                   p-3 rounded-xl cursor-pointer transition-all border
                   ${
                     isSelected
-                      ? 'bg-rose-950/40 border-rose-500/50 shadow-md shadow-rose-950/50 scale-[1.01]'
-                      : 'bg-slate-900/50 border-white/5 hover:border-white/25 hover:bg-slate-900/80 hover:-translate-y-0.5 hover:shadow-md'
+                      ? "bg-rose-950/40 border-rose-500/50 shadow-md shadow-rose-950/50 scale-[1.01]"
+                      : "bg-slate-900/50 border-white/5 hover:border-white/25 hover:bg-slate-900/80 hover:-translate-y-0.5 hover:shadow-md"
                   }
                 `}
               >
@@ -189,7 +187,13 @@ export function PublicSafetyDispatch() {
             <path d="M 0 350 L 800 370" stroke="#334155" strokeWidth="3" />
             <path d="M 250 0 L 280 600" stroke="#334155" strokeWidth="4" />
             <path d="M 520 0 L 540 600" stroke="#334155" strokeWidth="3" />
-            <path d="M 100 200 Q 300 150 700 250" stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="6 4" opacity="0.6" />
+            <path
+              d="M 100 200 Q 300 150 700 250"
+              stroke="#38bdf8"
+              strokeWidth="1.5"
+              strokeDasharray="6 4"
+              opacity="0.6"
+            />
           </svg>
 
           {/* Interactive Map Markers */}
@@ -205,15 +209,15 @@ export function PublicSafetyDispatch() {
                 {/* Radar Rings */}
                 <div
                   className={`absolute -inset-6 rounded-full animate-ping pointer-events-none opacity-40 ${
-                    isSelected ? 'bg-rose-500' : 'bg-blue-500'
+                    isSelected ? "bg-rose-500" : "bg-blue-500"
                   }`}
-                  style={{ animationDuration: '2.5s' }}
+                  style={{ animationDuration: "2.5s" }}
                 />
                 <div
                   className={`size-10 rounded-full border-2 flex items-center justify-center shadow-lg transition-transform group-hover:scale-125 ${
                     isSelected
-                      ? 'bg-rose-600 border-white text-white shadow-rose-500/50'
-                      : 'bg-slate-900 border-rose-500 text-rose-400'
+                      ? "bg-rose-600 border-white text-white shadow-rose-500/50"
+                      : "bg-slate-900 border-rose-500 text-rose-400"
                   }`}
                 >
                   <MapPin className="size-5" />
@@ -294,7 +298,10 @@ export function PublicSafetyDispatch() {
 
             {/* Simulated Camera Screen */}
             <div className="relative w-full h-28 rounded-lg overflow-hidden border border-white/10 bg-slate-900 flex items-center justify-center">
-              <svg className="absolute inset-0 size-full opacity-30" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                className="absolute inset-0 size-full opacity-30"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <rect width="100%" height="100%" fill="#0f172a" />
                 <circle cx="50%" cy="50%" r="30" stroke="#38bdf8" strokeWidth="1" fill="none" />
                 <line x1="0" y1="50%" x2="100%" y2="50%" stroke="#38bdf8" strokeWidth="0.5" />
@@ -303,7 +310,9 @@ export function PublicSafetyDispatch() {
 
               <div className="relative z-10 text-center">
                 <Radio className="size-6 text-rose-400 mx-auto animate-pulse" />
-                <p className="text-[10px] font-mono text-slate-300 mt-1">CAM-04 · {selectedAlert.title}</p>
+                <p className="text-[10px] font-mono text-slate-300 mt-1">
+                  CAM-04 · {selectedAlert.title}
+                </p>
                 <p className="text-[9px] font-mono text-emerald-400">FEED OK · 1080P 30FPS</p>
               </div>
 

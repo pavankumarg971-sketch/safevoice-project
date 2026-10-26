@@ -528,13 +528,13 @@ export const endEmergencySession = createServerFn({ method: "POST" })
 export const notificationProviderStatus = createServerFn({ method: "GET" }).handler(async () => ({
   sms: Boolean(
     process.env["TWILIO_ACCOUNT_SID"] &&
-      process.env["TWILIO_AUTH_TOKEN"] &&
-      process.env["TWILIO_PHONE_NUMBER"],
+    process.env["TWILIO_AUTH_TOKEN"] &&
+    process.env["TWILIO_PHONE_NUMBER"],
   ),
   voice: Boolean(
     process.env["TWILIO_ACCOUNT_SID"] &&
-      process.env["TWILIO_AUTH_TOKEN"] &&
-      process.env["TWILIO_PHONE_NUMBER"],
+    process.env["TWILIO_AUTH_TOKEN"] &&
+    process.env["TWILIO_PHONE_NUMBER"],
   ),
   email: Boolean(process.env["RESEND_API_KEY"]),
 }));

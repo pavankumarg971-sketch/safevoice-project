@@ -139,7 +139,10 @@ function Landing() {
       <header className="sticky top-0 z-50 w-full border-b border-white/[0.08] bg-[#070d18]/70 backdrop-blur-2xl shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           {/* Brand Logo with 3D Glass Badge */}
-          <Link to="/" className="flex items-center gap-3 text-lg font-bold tracking-tight text-white group">
+          <Link
+            to="/"
+            className="flex items-center gap-3 text-lg font-bold tracking-tight text-white group"
+          >
             <span className="grid size-10 place-items-center rounded-2xl bg-gradient-to-tr from-rose-600 via-pink-600 to-rose-400 text-white shadow-[0_0_25px_rgba(244,63,94,0.45),inset_0_1px_1px_rgba(255,255,255,0.4)] group-hover:scale-105 transition-transform duration-300">
               <ShieldCheck className="size-5" />
             </span>
@@ -256,13 +259,28 @@ function Landing() {
                 </Button>
               ) : (
                 <>
-                  <Button asChild variant="outline" className="w-full justify-center border-white/10 text-white rounded-xl">
-                    <Link to="/auth" search={{ mode: "login", redirect: "/dashboard" }} onClick={() => setMobileMenuOpen(false)}>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="w-full justify-center border-white/10 text-white rounded-xl"
+                  >
+                    <Link
+                      to="/auth"
+                      search={{ mode: "login", redirect: "/dashboard" }}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
                       Sign in
                     </Link>
                   </Button>
-                  <Button asChild className="w-full justify-center bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold">
-                    <Link to="/auth" search={{ mode: "register", redirect: "/dashboard" }} onClick={() => setMobileMenuOpen(false)}>
+                  <Button
+                    asChild
+                    className="w-full justify-center bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold"
+                  >
+                    <Link
+                      to="/auth"
+                      search={{ mode: "register", redirect: "/dashboard" }}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
                       Create account
                     </Link>
                   </Button>
@@ -395,7 +413,9 @@ function Landing() {
             </div>
 
             <div>
-              <h3 className="text-2xl font-extrabold text-white tracking-tight">Sign In Required</h3>
+              <h3 className="text-2xl font-extrabold text-white tracking-tight">
+                Sign In Required
+              </h3>
               <p className="text-xs sm:text-sm text-slate-300/80 mt-2 leading-relaxed">
                 Please sign in to your SafeVoice account or register to {promptActionName}.
               </p>

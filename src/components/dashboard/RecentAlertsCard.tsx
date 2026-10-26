@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-import { Bell, Clock, CheckCircle, AlertTriangle, Mic } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useState } from "react";
+import { Bell, Clock, CheckCircle, AlertTriangle, Mic } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 type Alert = {
   id: string;
-  trigger_type: 'BUTTON' | 'VOICE';
-  status: 'ACTIVE' | 'ACKNOWLEDGED' | 'RESOLVED';
+  trigger_type: "BUTTON" | "VOICE";
+  status: "ACTIVE" | "ACKNOWLEDGED" | "RESOLVED";
   demo: boolean;
   created_at: string;
 };
@@ -20,33 +20,39 @@ function formatTime(timestamp: string): string {
     const diffMs = now.getTime() - date.getTime();
     const diffMin = Math.floor(diffMs / 60000);
 
-    if (diffMin < 1) return 'Just now';
+    if (diffMin < 1) return "Just now";
     if (diffMin < 60) return `${diffMin}m ago`;
     const diffHr = Math.floor(diffMin / 60);
     if (diffHr < 24) return `${diffHr}h ago`;
     return date.toLocaleDateString();
   } catch {
-    return 'Unknown';
+    return "Unknown";
   }
 }
 
-function getStatusBadge(status: Alert['status']) {
+function getStatusBadge(status: Alert["status"]) {
   switch (status) {
-    case 'ACTIVE':
+    case "ACTIVE":
       return (
         <Badge variant="destructive" className="text-xs">
           Active
         </Badge>
       );
-    case 'ACKNOWLEDGED':
+    case "ACKNOWLEDGED":
       return (
-        <Badge variant="outline" className="text-xs border-yellow-500/30 text-yellow-300 bg-yellow-500/10">
+        <Badge
+          variant="outline"
+          className="text-xs border-yellow-500/30 text-yellow-300 bg-yellow-500/10"
+        >
           Acknowledged
         </Badge>
       );
-    case 'RESOLVED':
+    case "RESOLVED":
       return (
-        <Badge variant="outline" className="text-xs border-green-500/30 text-green-300 bg-green-500/10">
+        <Badge
+          variant="outline"
+          className="text-xs border-green-500/30 text-green-300 bg-green-500/10"
+        >
           Resolved
         </Badge>
       );
@@ -72,10 +78,10 @@ export function RecentAlertsCard() {
     }
 
     supabase
-      .from('alerts')
-      .select('id, trigger_type, status, demo, created_at')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
+      .from("alerts")
+      .select("id, trigger_type, status, demo, created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
       .limit(10)
       .then(({ data }) => {
         setAlerts((data as Alert[]) ?? []);
@@ -100,17 +106,17 @@ export function RecentAlertsCard() {
             <p className="text-sm text-white/40">No recent alerts</p>
             <p className="text-xs text-white/20 mt-1">
               {session
-                ? 'Alerts will appear here when you trigger an SOS or voice detection.'
-                : 'Sign in to see your alert history.'}
+                ? "Alerts will appear here when you trigger an SOS or voice detection."
+                : "Sign in to see your alert history."}
             </p>
           </div>
         ) : (
           <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
             {alerts.map((alert) => {
-              const isVoice = alert.trigger_type === 'VOICE';
+              const isVoice = alert.trigger_type === "VOICE";
               const TriggerIcon = isVoice ? Mic : AlertTriangle;
-              const triggerColor = isVoice ? 'text-orange-400' : 'text-red-400';
-              const triggerLabel = isVoice ? 'Voice Alert' : 'SOS Alert';
+              const triggerColor = isVoice ? "text-orange-400" : "text-red-400";
+              const triggerLabel = isVoice ? "Voice Alert" : "SOS Alert";
 
               return (
                 <div
@@ -124,9 +130,7 @@ export function RecentAlertsCard() {
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm font-medium">
                         {triggerLabel}
-                        {alert.demo && (
-                          <span className="ml-1 text-xs text-yellow-400">(demo)</span>
-                        )}
+                        {alert.demo && <span className="ml-1 text-xs text-yellow-400">(demo)</span>}
                       </span>
                       {getStatusBadge(alert.status)}
                     </div>
@@ -135,7 +139,7 @@ export function RecentAlertsCard() {
                       {formatTime(alert.created_at)}
                     </div>
                   </div>
-                  {alert.status === 'ACTIVE' && (
+                  {alert.status === "ACTIVE" && (
                     <CheckCircle className="h-4 w-4 text-white/20 shrink-0 mt-0.5" />
                   )}
                 </div>

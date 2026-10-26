@@ -44,30 +44,40 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
+  const isNetworkError =
+    error?.message?.toLowerCase().includes("network") ||
+    error?.message?.toLowerCase().includes("fetch") ||
+    error?.message?.toLowerCase().includes("server");
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          Unable to connect to SafeVoice server.
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white px-4">
+      <div className="max-w-md text-center p-6 rounded-2xl bg-slate-900 border border-white/10 shadow-2xl">
+        <h1 className="text-xl font-bold tracking-tight text-white">
+          {isNetworkError ? "Connection Notice" : "Application Notice"}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong. You can try again or head back home.
+        <p className="mt-2 text-sm text-slate-300">
+          {isNetworkError
+            ? "Unable to reach SafeVoice server. Retrying or working in offline mode."
+            : "An unexpected display issue occurred. You can safely return to the dashboard."}
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <p className="mt-3 text-xs text-rose-300 bg-rose-500/10 p-3 rounded-xl border border-rose-500/20 font-mono text-left overflow-auto max-h-32">
+          {error?.message || "Unexpected error"}
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-blue-500 cursor-pointer shadow-md"
           >
             Try again
           </button>
           <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            href="/dashboard"
+            className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/5 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-white/10"
           >
-            Go home
+            Go to Dashboard
           </a>
         </div>
       </div>

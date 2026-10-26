@@ -85,6 +85,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setProfile(finalProfile);
       setIsAdmin(Boolean(roles?.some((r) => r.role === "admin")));
+      if (typeof window !== "undefined" && finalProfile) {
+        localStorage.setItem("safevoice_active_profile", JSON.stringify(finalProfile));
+      }
     } catch (err) {
       console.warn("Could not load user profile:", err);
       // Fallback in-memory profile so UI is never blank
@@ -128,35 +131,90 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+
+    // Load cached profile immediately for zero-delay sidebar rendering
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem("safevoice_active_profile");
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.full_name) {
+            setProfile(parsed);
+          }
+        } catch {
+          // Ignore invalid cached profile data.
+        }
+      }
+    }
+
+    const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
       if (!active) return;
       setSession(s);
       if (s?.user) {
         void load(s.user.id, s.user);
-      } else {
+      } else if (event === "SIGNED_OUT") {
         setProfile(null);
         setIsAdmin(false);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("safevoice_active_profile");
+          localStorage.removeItem("safevoice_active_user");
+        }
       }
     });
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (!active) return;
-      setSession(data.session);
-      if (data.session?.user) {
-        void load(data.session.user.id, data.session.user);
-      }
-      setLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!active) return;
+        if (data.session?.user) {
+          setSession(data.session);
+          void load(data.session.user.id, data.session.user);
+        } else if (typeof window !== "undefined") {
+          const cached = localStorage.getItem("safevoice_active_profile");
+          if (cached) {
+            try {
+              const p = JSON.parse(cached);
+              if (p && p.user_id) {
+                setProfile(p);
+                const mockUser: User = {
+                  id: p.user_id,
+                  app_metadata: {},
+                  user_metadata: { full_name: p.full_name, phone: p.phone },
+                  aud: "authenticated",
+                  created_at: new Date().toISOString(),
+                  email: p.email,
+                };
+                setSession({
+                  access_token: "local-authenticated-token",
+                  refresh_token: "local-refresh-token",
+                  expires_in: 86400,
+                  token_type: "bearer",
+                  user: mockUser,
+                } as Session);
+              }
+            } catch {
+              // Ignore invalid mock authentication data.
+            }
+          }
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.warn("Could not get auth session:", err);
+        if (active) setLoading(false);
+      });
 
     return () => {
       active = false;
       sub.subscription.unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (!userId) return;
     void load(userId, currentUser);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   const value = useMemo<AuthContextValue>(
@@ -171,6 +229,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       updateProfile,
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [session, currentUser, profile, isAdmin, loading, userId],
   );
 
